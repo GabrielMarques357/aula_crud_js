@@ -1,25 +1,72 @@
-import ModelUser from '../model/users.js'
+import { ValidationErrorItemOrigin } from 'sequelize'
+import User from '../model/users.js'
 
 class ServiceUser {
 
     FindAll() {
-        return ModelUser.FindAll()
+        return User.FindAll()
     }
 
-    FindOne(index) {
-        return ModelUser.FindOne(index)
+    async FindOne(id) {
+
+        if (!id) {
+            throw new Error("Favor informar o ID")
+        }
+
+        // procurar usuario no banco
+        const user = await User.findByPk(id)
+
+        if (!user) {
+            throw new Error(`Usuário ${id} não encontrado`)
+        }
+
+        return user
     }
 
-    Create(nome) {
-        return ModelUser.Create(nome)
+     async Create(nome, email, senha, ativo) {
+        if (!nome || !email || !senha) {
+            throw new Error("Favor preencher todos os campos")
+        }
+
+         await User.create({
+            nome, email, senha, ativo
+        })
     }
 
-    Update(index, nome) {
-        return ModelUser.Update(index, nome)
+    async Update(id, nome, email, senha, ativo) {
+
+        if (!id) {
+            throw new Error("Favor informar o ID")
+        }
+
+        const user = await User.findByPk(id)
+
+        if (!user) {
+            throw new Error(`Usuário ${id} não encontrado`)
+        }
+        
+        user.nome = nome
+        user.email = email
+        user.senha = senha
+        user.ativo = ativo
+        await user.save()
+        
     }
 
-    Delete(index) {
-        return ModelUser.Delete(index)
+    async Delete(id) {
+
+        if (!id) {
+            throw new Error("Favor informar o ID")
+        }
+
+        // procurar usuario no banco
+        const user = await User.findByPk(id)
+
+        if (!user) {
+            throw new Error(`Usuário ${id} não encontrado`)
+        }
+
+        await user.destroy()
 }
 
 }
