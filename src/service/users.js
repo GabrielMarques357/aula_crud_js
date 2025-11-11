@@ -1,5 +1,8 @@
 import { ValidationErrorItemOrigin } from 'sequelize'
 import User from '../model/users.js'
+import jwt from 'jsonwebtoken'
+
+const JWT_SEGREDO =  "M3uS3gr3d0"
 
 class ServiceUser {
 
@@ -68,6 +71,21 @@ class ServiceUser {
 
         await user.destroy()
 }
+
+    async Login(email, senha) {
+        if(!email || !senha) {
+            throw new Error("Email ou senha invalidos.")
+        }
+
+        const user = await User.findOne({ where: { email } })
+
+        if (!user || user.senha !== senha) {
+            throw new Error("Email ou senha invalidos.")
+        }
+
+        return jwt.sign({ id: user.id, nome: user.nome }, JWT_SEGREDO, {expiresIn: 60 * 60})
+
+    }
 
 }
 
