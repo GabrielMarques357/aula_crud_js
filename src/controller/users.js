@@ -16,7 +16,10 @@ class ControllerUser {
 
     async FindOne(req, res) {
         try {
+            console.log(req.headers.user)
             const id = req.params.id
+            console.log(id)
+
             const user = await ServiceUser.FindOne(id)
 
             res.status(200).send({user})
@@ -29,7 +32,7 @@ class ControllerUser {
      async Create(req, res) {
         try {
             const {nome, email, senha, ativo} = req.body
-             await ServiceUser.Create(nome, email, senha, ativo)
+             await ServiceUser.Create(nome, email, senha, ativo, 1)
 
             res.status(201).send()
 
